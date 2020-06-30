@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv=content-type content="text/html; charset=utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=11;ie=9;ie=8;ie=7" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>信用卡信息填写</title>
+    <style>
+        label,p{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            font-family:PingFangSC-Regular;
+            background-color: #f5f5f5;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            margin: 0;
+        }
+        .card-info{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .card-info-title{
+            font-size:20px;
+            color:#000000;
+            letter-spacing:0.19px;
+            text-align:center;
+            line-height:37px;
+            margin:50px auto 28px;
+        }
+        .card-info-group{
+            margin: 20px;
+            height: 46px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px 15px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .card-info-group label{
+            font-size:14px;
+            color:#000000;
+            letter-spacing:-0.34px;
+            line-height:22px;
+            float: left;
+
+        }
+        .card-info-group>input{
+            float: right;
+            appearance: none;
+            outline: none;
+            border: none;
+            text-indent: 14px;
+            line-height: 22px;
+            width: 200px;
+            display: none;
+        }
+        .card-info-group>p {
+            float: right;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.50);
+            letter-spacing: -0.34px;
+            text-align: right;
+            line-height: 22px;
+        }
+        #submitForm{
+            margin:236px 16px 20px;
+            background-color: #00a0e9;
+            color: white;
+            font-size: 14px;
+            line-height: 50px;
+            border: none;
+            border-radius: 4px;
+            display: block;
+            width: calc(100% - 32px);
+        }
+    </style>
+</head>
+<body>
+<form id="cardInformation" class="card-info-pay">
+    <div class="card-info-title">
+        信用卡信息填写
+    </div>
+    <div class="card-info-group">
+        <label>姓名</label>
+        <input required name="userName" maxlength="20" placeholder="持卡人姓名">
+        <p placeholder="持卡人姓名">持卡人姓名</p>
+    </div>
+    <div class="card-info-group">
+        <label>信用卡号</label>
+        <input required name="cardNum" maxlength="20" id="card" placeholder="信用卡号" type="tel">
+        <p placeholder="信用卡号">信用卡号</p>
+    </div>
+    <div class="card-info-group">
+        <label>身份证号</label>
+        <input name="idCard" maxlength="20" placeholder="持卡人身份证号" type="tel">
+        <p placeholder="持卡人身份证号">持卡人身份证号</p>
+    </div>
+    <div class="card-info-group">
+        <label>银行预留手机号</label>
+        <input name="mobile" maxlength="11" placeholder="请输入手机号" type="tel">
+        <p placeholder="请输入手机号">请输入手机号</p>
+    </div>
+    <button id="submitForm" type="button">分期签约提交</button>
+</form>
+</body>
+<script src="validation.js"></script>
+<script>
+   /* document.querySelector('button').addEventListener('click',function () {
+        console.log(document.forms['form']['username'].value);
+        console.log(document.forms['form']['gender'].value);
+        console.log(document.forms['form']['job'].value);
+        console.log(document.forms['form']['food'].values().next());
+    })*/
+   let inputList = Array.prototype.slice
+       .call(document.querySelectorAll(".card-info-group>input"));
+   let particalList = Array.prototype.slice
+       .call(document.querySelectorAll(".card-info-group>p"));
+   inputList.forEach(function (input) {
+       input.addEventListener("blur",function (event) {
+           let value = this.value;
+           this.style.display = "none";
+           this.nextElementSibling.style.display="block";
+           this.nextElementSibling.innerHTML = value==""?
+               this.nextElementSibling.getAttribute("placeholder"):value;
+       })
+   })
+   particalList.forEach(function (p) {
+       p.addEventListener("click",function (event) {
+           this.style.display = "none";
+           this.previousElementSibling.style.display="block";
+           this.previousElementSibling.focus();
+       })
+   })
+
+
+   let query = parseQuery(window.location.search);
+
+   let rules = {
+       userName: {required: true, message: "请输入持卡人姓名！"},
+       cardNum: [
+           {required: true, message: "请输入信用卡号！"},
+           {pattern:/^[0-9]{16,29}$/,message: "输入的卡号不正确"}
+       ],
+       idCard: [
+           {required: true, message: "请输入持卡人身份证号！"},
+           //{validator: isIDCard, message: "请输入身份证号有误！"},
+       ],
+       mobile: [
+           {required: true, message: "请输入持卡人手机！"},
+           {pattern:/^1[0-9]{10}$/,message: "输入的手机号有误"}
+       ],
+   }
+    let validator =new Validation({
+        form:document.querySelector("#cardInformation"),
+        rules:rules
+    })
+   document.querySelector("#submitForm").addEventListener("click",function () {
+       validator.validate(function (valide) {
+            if(valide){
+                console.log("success");
+            }
+       })
+   })
+</script>
+</html>
